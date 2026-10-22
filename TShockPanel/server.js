@@ -35,6 +35,7 @@ const { createStateView } = require('./lib/state-view');
 const { createPanelState } = require('./lib/panel-state');
 const { createHttpUtils } = require('./lib/http-utils');
 const { listenWithFallback } = require('./lib/listen');
+const { checkRequest } = require('./lib/request-guard');
 const { createBackupService } = require('./lib/backups');
 const { createWorldStore } = require('./lib/worlds-store');
 const { createPluginRoutes } = require('./routers/plugins');
@@ -550,6 +551,9 @@ const staticFiles = createStaticFiles({ publicDir: PUBLIC_DIR, fs, fsp, path });
 // 服务器
 // ---------------------------------------------------------------------------
 
+// 实际监听端口：跨站防护要拿它校验 Host / Origin（端口顺延后也跟着变）
+let activePort = 0;
+
 const server = http.createServer(async (req, res) => {
   const started = Date.now();
   const url = new URL(req.url, 'http://localhost');
@@ -557,6 +561,15 @@ const server = http.createServer(async (req, res) => {
 
   try {
     if (pathname.startsWith('/api/')) {
+      // 只对本机页面提供服务：面板没有鉴权，这里防的是“用户随便打开一个网页就被远程操作”
+      if (activePort) {
+        const denial = checkRequest(req, activePort);
+        if (denial) {
+          addLog('panel', `拒绝请求 ${pathname}：${denial}`);
+          json(res, 403, { error: denial });
+          return;
+        }
+      }
       for (const r of routes) {
         if (r.method !== req.method) continue;
         const match = r.pattern.exec(pathname);
@@ -610,6 +623,7 @@ async function main() {
 
   const desiredPort = Number(state.panelPort) || 13087;
   const port = await listenWithFallback(server, desiredPort);
+  activePort = port;
   // 端口被占用时只是临时顺延，不改写用户配置的端口，避免下次启动越飘越远
   if (port !== desiredPort) addLog('panel', `端口 ${desiredPort} 被占用，本次临时使用 ${port}`);
   saveState();
