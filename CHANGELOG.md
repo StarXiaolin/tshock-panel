@@ -4,6 +4,13 @@
 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 版本号的判定规则见 [RELEASING.md](RELEASING.md)。
 
+## [未发布]
+
+### 文档
+
+- README 增加「开发说明」：代码重构与部分功能/文档由 AI 编程助手（DeepSeek Harness）辅助完成，
+  设计取舍、测试与发布验收由维护者负责
+
 ## [1.0.1] - 2026-10-22
 
 ### 修复

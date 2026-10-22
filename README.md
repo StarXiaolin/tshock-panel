@@ -109,8 +109,16 @@ TShockPanel/
 | 加页面/加接口，向下兼容 | 次版本 +1（`1.1.0`） |
 | 破坏性改动（配置格式、要求的 TShock/Node 版本变了） | 主版本 +1（`2.0.0`） |
 
-当前版本 `1.0.0`，与帮助页显示的版本号、`TShockPanel/server.js` 里的 `VERSION` 常量一致。
+当前版本 `1.0.1`，与帮助页显示的版本号、`TShockPanel/server.js` 里的 `VERSION` 常量一致。
 发版流程见 **[RELEASING.md](RELEASING.md)**，变更记录见 **[CHANGELOG.md](CHANGELOG.md)**。
+
+## 开发说明
+
+面板主体在 TShock 发布包的基础上开发。后续的代码重构，以及自定义配色、认证码状态提示
+等功能与文档，由 AI 编程助手 **DeepSeek Harness** 辅助完成。
+
+设计取舍、测试用例、发布验收与最终的代码审查由维护者负责；仓库里保留了完整测试，
+可用 `node tools/run-tests.js` 复现。
 
 ## 许可证
 
