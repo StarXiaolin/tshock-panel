@@ -8,8 +8,11 @@
  * “脚本能加载、boot 不炸”这一层验证；它不能替代真人点页面，但能抓住
  * 拆分脚本时最容易出现的 ReferenceError / 初始化异常。
  *
- * 前置：面板必须已经在 13087 端口运行（node TShockPanel/server.js --no-open）。
- * 用法：node tools/frontend-boot.js [--port 13087]
+ * 前置：可选。面板已经在 13087 端口跑着时用真接口；没跑（比如 CI、刚 clone 下来）
+ * 就自动退化成离线桩数据，只验证脚本顺序与 boot() 初始化，不碰网络。
+ * 用法：node tools/frontend-boot.js [--port 13087] [--offline] [--require-live]
+ *       --offline       强制用离线桩数据
+ *       --require-live  面板不在运行就直接失败（旧行为，用于验活页时的自检）
  */
 
 const fs = require('fs');
@@ -21,6 +24,8 @@ const publicDir = path.join(root, 'TShockPanel', 'public');
 const portArg = process.argv.indexOf('--port');
 const port = portArg >= 0 ? Number(process.argv[portArg + 1]) : 13087;
 const base = `http://127.0.0.1:${port}`;
+const requireLive = process.argv.includes('--require-live');
+let offline = process.argv.includes('--offline');
 
 const errors = [];
 const consoleErrors = [];
@@ -125,6 +130,45 @@ const documentStub = {
   documentElement: makeEl('HTML'),
 };
 
+/* 离线桩：没有面板在跑时给 boot() 用的最小数据，只要能让初始化跑完 */
+const OFFLINE_UI = { theme: 'dark', fontScale: 1, density: 'comfortable', iconSize: 18, showLabels: true, customThemes: {} };
+const OFFLINE_STATE = {
+  version: '0.0.0-offline',
+  now: 0,
+  server: {
+    running: false,
+    ready: false,
+    adopted: false,
+    mode: null,
+    pid: null,
+    startedAt: null,
+    uptimeMs: 0,
+    worldPath: '',
+    worldName: '',
+    port: 7777,
+    maxPlayers: 8,
+    lastError: '',
+  },
+  live: null,
+  players: [],
+  setupCode: '',
+  setupLocked: true,
+  paths: { serverDir: '', panelDir: '', worldsDir: '', tshockDir: '', backupsDir: '', logsDir: '' },
+  launch: { world: '', port: 7777, maxPlayers: 8, password: '' },
+  config: { maxSlots: 8, serverPort: 7777, hasPassword: false },
+  rest: { port: 7878, ok: false },
+  backupOnStart: true,
+  autoRestart: false,
+};
+
+function offlineResponse(url) {
+  const pathname = String(url).replace(/^https?:\/\/[^/]+/, '').split('?')[0];
+  let data = {};
+  if (pathname === '/api/state') data = OFFLINE_STATE;
+  else if (pathname === '/api/ui') data = OFFLINE_UI;
+  return { ok: true, status: 200, json: async () => data, text: async () => JSON.stringify(data) };
+}
+
 const sandbox = {
   console: {
     log: () => {},
@@ -148,6 +192,7 @@ const sandbox = {
   clearInterval: () => {},
   requestAnimationFrame: (fn) => setTimeout(fn, 0),
   fetch: async (url, opts) => {
+    if (offline) return offlineResponse(url);
     const target = String(url).startsWith('http') ? String(url) : `${base}${url}`;
     const res = await fetch(target, opts);
     return res;
@@ -169,14 +214,23 @@ console.log(`  脚本顺序：${scriptSrcs.join(' -> ')}`);
 const context = vm.createContext(sandbox);
 
 (async () => {
-  // 前置检查：面板必须已经跑着，否则 boot 必然失败，报错会误导成“前端坏了”
-  try {
-    const probe = await fetch(`${base}/api/state`);
-    if (!probe.ok) throw new Error(`HTTP ${probe.status}`);
-  } catch (err) {
-    console.error(`\n面板没有在 ${base} 运行（${err.message}）。`);
-    console.error('请先另开一个窗口执行：node TShockPanel/server.js --no-open');
-    process.exit(2);
+  // 前置检查：面板跑着就用真接口；没跑（CI / 刚 clone）就退化成离线桩，
+  // 别让“连不上”伪装成“前端坏了”。--require-live 保留旧的严格行为。
+  if (offline) {
+    console.log('  已指定 --offline：使用离线桩数据');
+  } else {
+    try {
+      const probe = await fetch(`${base}/api/state`);
+      if (!probe.ok) throw new Error(`HTTP ${probe.status}`);
+    } catch (err) {
+      if (requireLive) {
+        console.error(`\n面板没有在 ${base} 运行（${err.message}）。`);
+        console.error('请先另开一个窗口执行：node TShockPanel/server.js --no-open');
+        process.exit(2);
+      }
+      offline = true;
+      console.log(`  未检测到运行中的面板（${err.message}），改用离线桩数据`);
+    }
   }
 
   for (const src of scriptSrcs) {

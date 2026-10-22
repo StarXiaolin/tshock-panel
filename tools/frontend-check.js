@@ -13,7 +13,11 @@
  *      （防止搬运时漏掉一段）。
  *
  * 用法：node tools/frontend-check.js
- *       node tools/frontend-check.js --rev arch-2026-10-19-baseline
+ *       node tools/frontend-check.js --rev arch-2026-10-19-baseline   # 从 git 历史取基线
+ *       node tools/frontend-check.js --write-baseline                 # 重新生成内置基线快照
+ *
+ * 基线默认读 tools/frontend-baseline.json：公开仓库里没有那批内部重构标签，
+ * 所以基线必须是仓库自带的数据，而不是“本机 git 里刚好有的标签”。
  */
 
 const fs = require('fs');
@@ -23,7 +27,10 @@ const { execFileSync } = require('child_process');
 const root = path.resolve(__dirname, '..');
 const publicDir = path.join(root, 'TShockPanel', 'public');
 const revIndex = process.argv.indexOf('--rev');
-const baselineRev = revIndex >= 0 ? process.argv[revIndex + 1] : 'arch-2026-10-19-baseline';
+const explicitRev = revIndex >= 0 ? process.argv[revIndex + 1] : null;
+const DEFAULT_REV = 'arch-2026-10-19-baseline';
+const BASELINE_FILE = path.join(__dirname, 'frontend-baseline.json');
+const writeBaseline = process.argv.includes('--write-baseline');
 
 let failed = 0;
 function fail(message) {
@@ -50,7 +57,58 @@ function topLevelNames(source) {
 }
 
 console.log('前端脚本完整性检查');
-console.log(`  基线版本：${baselineRev}`);
+
+function readFromGit(rev) {
+  return execFileSync('git', ['show', `${rev}:TShockPanel/public/app.js`], {
+    cwd: root,
+    encoding: 'utf8',
+    maxBuffer: 32 * 1024 * 1024,
+  });
+}
+
+function caseLabels(text) {
+  return [...text.matchAll(/^\s{4}case '([^']+)':/gm)].map((m) => m[1]);
+}
+
+if (writeBaseline) {
+  const rev = explicitRev || DEFAULT_REV;
+  const source = readFromGit(rev);
+  const data = {
+    source: rev,
+    generatedAt: new Date().toISOString().slice(0, 10),
+    names: [...topLevelNames(source)].sort(),
+    actions: [...new Set(caseLabels(source))].sort(),
+  };
+  fs.writeFileSync(BASELINE_FILE, JSON.stringify(data, null, 2) + '\n');
+  console.log(`  已写入 ${path.relative(root, BASELINE_FILE)}`);
+  console.log(`  来源 ${rev}：${data.names.length} 个符号、${data.actions.length} 个 action`);
+  process.exit(0);
+}
+
+let baseline = null;
+if (explicitRev) {
+  try {
+    const source = readFromGit(explicitRev);
+    baseline = { label: `git:${explicitRev}`, names: topLevelNames(source), actions: new Set(caseLabels(source)) };
+  } catch (err) {
+    fail(`取不到基线版本 ${explicitRev} 的 app.js：${err.message.split('\n')[0]}`);
+  }
+} else if (fs.existsSync(BASELINE_FILE)) {
+  const data = JSON.parse(fs.readFileSync(BASELINE_FILE, 'utf8'));
+  baseline = {
+    label: `内置快照（来自 ${data.source}）`,
+    names: new Set(data.names),
+    actions: new Set(data.actions),
+  };
+} else {
+  try {
+    const source = readFromGit(DEFAULT_REV);
+    baseline = { label: `git:${DEFAULT_REV}`, names: topLevelNames(source), actions: new Set(caseLabels(source)) };
+  } catch (err) {
+    console.log('  [SKIP] 没有内置基线快照，也取不到本地标签，跳过基线对比');
+  }
+}
+if (baseline) console.log(`  基线：${baseline.label}`);
 
 // 1) 解析 index.html 的脚本顺序
 const html = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
@@ -85,19 +143,8 @@ if (files === scriptSrcs.length && files > 0) {
 }
 
 // 2) 基线符号必须仍然存在
-let baselineSource = '';
-try {
-  baselineSource = execFileSync('git', ['show', `${baselineRev}:TShockPanel/public/app.js`], {
-    cwd: root,
-    encoding: 'utf8',
-    maxBuffer: 32 * 1024 * 1024,
-  });
-} catch (err) {
-  fail(`取不到基线版本 ${baselineRev} 的 app.js：${err.message.split('\n')[0]}`);
-}
-
-if (baselineSource) {
-  const baselineNames = topLevelNames(baselineSource);
+if (baseline) {
+  const baselineNames = baseline.names;
   const missing = [...baselineNames].filter((n) => !allNames.has(n));
   if (missing.length > 0) {
     fail(`基线里有 ${missing.length} 个顶层符号在拆分后找不到：${missing.join(', ')}`);
@@ -132,8 +179,7 @@ if (baselineSource) {
 
   // 4) action 名称集合：把 handleAction 拆成多组后，任何一个 case 漏搬都会导致按钮失灵，
   //    所以逐个比对“基线里有哪些 case，现在是否都还在”，并且不允许重复定义。
-  const caseLabels = (text) => [...text.matchAll(/^\s{4}case '([^']+)':/gm)].map((m) => m[1]);
-  const baselineCases = new Set(caseLabels(baselineSource));
+  const baselineCases = baseline.actions;
   const currentCases = new Map();
   for (const [src, names] of perFile) {
     if (!/^js\/(4\d|50)-/.test(src)) continue;

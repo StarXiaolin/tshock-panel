@@ -12,6 +12,9 @@
   `node tools/run-tests.js`；README 顶部挂 CI 徽章
 - **Issue 模板**：`.github/ISSUE_TEMPLATE/bug.yml`（要求填面板版本、Node 版本、TShock 版本、日志，
   并勾选“已删敏感信息”）与 `config.yml`（禁用空白 issue，引导先看使用手册与发布页）
+- **工具可在干净仓库/CI 里跑**：`frontend-check.js` 的基线改读仓库自带的
+  `tools/frontend-baseline.json`（不再依赖本机的内部 `arch-*` 标签）；`frontend-boot.js`
+  在没检测到面板时自动退化为离线桩数据，不再因为“连不上”而报错
 
 ### 文档
 
