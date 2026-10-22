@@ -7,7 +7,7 @@
  * 所以这里逐字段锁住：
  *   1. 服务器没跑时 live=null、players=[]、rest.ok=false；
  *   2. 跑起来后 status/players 两次 REST 调用与它们的失败兜底；
- *   3. setup-code.txt 读不到时给空串（不是报错）；
+ *   3. setup-code.txt 读不到时给空串（不是报错）；setup.lock 存在时 setupLocked=true（已初始化）；
  *   4. uptime 按 proc.startedAt 与注入的 now() 计算；
  *   5. 路径、launch、config、开关字段齐全，且 config 缺字段时有默认值。
  *
@@ -93,6 +93,7 @@ const statics = {
   check('世界路径回退到已选世界', off.server.worldPath, 'D:/Worlds/a.wld');
   check('端口与人数回退到 launch', [off.server.port, off.server.maxPlayers], [7777, 8]);
   check('setup-code 读不到给空串', off.setupCode, '');
+  check('两个认证文件都不存在时 setupLocked 为 false', off.setupLocked, false);
   check('路径字段齐全', Object.keys(off.paths).sort(), ['backupsDir', 'logsDir', 'panelDir', 'serverDir', 'tshockDir', 'worldsDir']);
   check('日志目录在 tshock 下', off.paths.logsDir, path.join(tshockDir, 'logs'));
   check('launch 原样透传', off.launch.world, 'D:/Worlds/a.wld');
@@ -101,7 +102,7 @@ const statics = {
   check(
     '顶层字段齐全',
     Object.keys(off).sort(),
-    ['version', 'now', 'server', 'live', 'players', 'setupCode', 'paths', 'launch', 'config', 'rest', 'backupOnStart', 'autoRestart'].sort()
+    ['version', 'now', 'server', 'live', 'players', 'setupCode', 'setupLocked', 'paths', 'launch', 'config', 'rest', 'backupOnStart', 'autoRestart'].sort()
   );
 
   console.log('2) 运行中：REST 两次调用');
@@ -124,6 +125,7 @@ const statics = {
   check('players 取数组', on.players, [{ nickname: 'Alice' }]);
   check('REST 就绪', on.rest.ok, true);
   check('setup-code 去空白', on.setupCode, 'ABC123');
+  check('有认证码时 setupLocked 仍为 false', on.setupLocked, false);
   check('uptime 按注入时钟计算', on.server.uptimeMs, 1000000 - 900000);
   check('运行字段', [on.server.running, on.server.ready, on.server.pid, on.server.mode], [true, true, 4242, 'run']);
   check('用 proc 的端口而不是 launch 的', on.server.port, 7788);
@@ -146,6 +148,14 @@ const statics = {
   const empty = await view.build();
   check('默认人数 8 / 端口 7777', [empty.config.maxSlots, empty.config.serverPort], [8, 7777]);
   check('没设密码', empty.config.hasPassword, false);
+
+  console.log('5) 已初始化：只剩 setup.lock');
+  fs.rmSync(path.join(tshockDir, 'setup-code.txt'), { force: true });
+  fs.writeFileSync(path.join(tshockDir, 'setup.lock'), '');
+  const locked = createStateView({ ...statics });
+  const after = await locked.build();
+  check('setup.lock 存在时 setupLocked 为 true', after.setupLocked, true);
+  check('已初始化时认证码仍为空串', after.setupCode, '');
 
   fs.rmSync(root, { recursive: true, force: true });
 

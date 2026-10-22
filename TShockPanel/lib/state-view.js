@@ -12,6 +12,9 @@
  *
  * 行为与拆分前一致，包括：服务器没跑时 live=null、players=[]、rest.ok=false；
  * 读不到 setup-code.txt 时给空字符串而不是报错。
+ *
+ * 额外提供 setupLocked：TShock 在「数据库里已经有注册玩家」时会停用初始认证系统、
+ * 删掉 setup-code.txt 并留下 setup.lock。前端靠这个字段区分“还没生成”和“已关掉”。
  */
 
 function createStateView(deps) {
@@ -58,6 +61,15 @@ function createStateView(deps) {
       setupCode = '';
     }
 
+    // 没开服/刚解压时两个文件都不存在 → 两份都是 false，前端提示“首次启动后生成”；
+    // 已有注册玩家时 TShock 只留 setup.lock → setupLocked=true，前端提示“已初始化，不需要认证码”。
+    let setupLocked = false;
+    try {
+      setupLocked = (await fsp.stat(path.join(tshockDir, 'setup.lock'))).isFile();
+    } catch (err) {
+      setupLocked = false;
+    }
+
     const state = getPanelState();
     const config = readJsonFile(configPath, {}) || {};
     const settings = config.Settings || {};
@@ -82,6 +94,7 @@ function createStateView(deps) {
       live,
       players,
       setupCode,
+      setupLocked,
       paths: {
         serverDir,
         panelDir,

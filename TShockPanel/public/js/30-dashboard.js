@@ -112,7 +112,16 @@ function renderSetupCard() {
   const box = $('#setup-card');
   const code = app.state?.setupCode;
   if (!code) {
-    box.innerHTML = '<div class="hint">没有找到 setup-code.txt，服务器首次启动后会自动生成。</div>';
+    // TShock 只在“数据库里还没有任何注册玩家”时生成认证码。
+    // 已经有玩家了（通常意味着服主已用 /setup 认证过），它会删掉 setup-code.txt 并留下 setup.lock：
+    // 这时不能写“没找到 / 还没生成”，那会让管理员以为出了错。
+    if (app.state?.setupLocked) {
+      box.innerHTML = `<div class="hint">这台服务器已经初始化过（数据库里已有注册玩家），TShock 已停用初始认证系统，因此不会有认证码——直接用你自己的服主账号进服即可。</div>
+        <div class="hint" style="margin-top:6px">如果忘了服主账号或密码，到「玩家与封禁」的用户账号里重置，或删掉 <code>tshock/tshock.sqlite</code> 重新开始（会丢账号与权限）。</div>`;
+      return;
+    }
+    box.innerHTML =
+      '<div class="hint">还没有认证码文件：第一次启动服务器后，TShock 会在 <code>tshock/setup-code.txt</code> 里生成认证码，并显示在这里。</div>';
     return;
   }
   box.innerHTML = `

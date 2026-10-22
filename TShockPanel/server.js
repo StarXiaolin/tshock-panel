@@ -64,7 +64,7 @@ const {
   eventPermission,
 } = require('./lib/catalog');
 
-const VERSION = '1.0.0';
+const VERSION = '1.0.1';
 
 const PANEL_DIR = __dirname;
 const SERVER_DIR = path.resolve(PANEL_DIR, '..');
