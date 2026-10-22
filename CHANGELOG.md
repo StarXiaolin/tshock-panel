@@ -6,6 +6,13 @@
 
 ## [未发布]
 
+### 基础设施
+
+- **CI**：`.github/workflows/ci.yml`，每次 push 到 `main` / PR 时在 `windows-latest` + Node 22 上跑
+  `node tools/run-tests.js`；README 顶部挂 CI 徽章
+- **Issue 模板**：`.github/ISSUE_TEMPLATE/bug.yml`（要求填面板版本、Node 版本、TShock 版本、日志，
+  并勾选“已删敏感信息”）与 `config.yml`（禁用空白 issue，引导先看使用手册与发布页）
+
 ### 文档
 
 - README 增加「开发说明」：代码重构与部分功能/文档由 AI 编程助手（DeepSeek Harness）辅助完成，

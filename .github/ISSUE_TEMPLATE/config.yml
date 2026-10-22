@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 使用手册（安装、开服、权限、备份、常见问题）
+    url: https://github.com/StarXiaolin/tshock-panel/blob/main/TShockPanel/README.md
+    about: 大多数使用问题在这一页能找到答案，先看这里再提 issue
+  - name: 最新版本与更新记录
+    url: https://github.com/StarXiaolin/tshock-panel/releases
+    about: 确认你用的是最新版本，老版本已修的问题不会再处理

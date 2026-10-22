@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: 单测 + 前端检查（Windows / Node 22）
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 确认运行环境
+        run: |
+          node -v
+          echo "runner=$env:RUNNER_OS"
+
+      - name: 跑 30 套单测 + 2 项前端检查
+        run: node tools/run-tests.js

@@ -1,5 +1,7 @@
 # TShock 管理面板
 
+[![CI](https://github.com/StarXiaolin/tshock-panel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/StarXiaolin/tshock-panel/actions/workflows/ci.yml)
+
 给 **泰拉瑞亚 TShock 服务器**（TShock 6.2.1 / 游戏 1.4.5.8）用的本地网页管理面板：
 在浏览器里开服、改配置、看日志、发物品、管权限、备份存档。
 
@@ -79,6 +81,7 @@ node tools/run-tests.js
 ```
 
 跑 30 套单测 + 2 项前端检查（不需要 TShock 服务器，几秒钟跑完）。
+每次推送到 `main` 或提 PR，GitHub Actions 都会在 Windows + Node 22 上自动跑同一套测试。
 需要完整发布包才能跑的冒烟测试：
 
 ```powershell

@@ -1,0 +1,110 @@
+name: Bug 报告
+description: 面板出现异常、报错，或者行为和你预期的不一样
+title: '[Bug] '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈。提交前请先确认两件事：
+        1. 你用的是[最新版本](https://github.com/StarXiaolin/tshock-panel/releases/latest)（老版本上已修的问题不会再处理）；
+        2. 安装、开服、权限、备份这类使用问题，先看[使用手册](https://github.com/StarXiaolin/tshock-panel/blob/main/TShockPanel/README.md)。
+
+        **注意**：`TShockPanel/panel.json` 里有 REST 令牌和明文服务器密码，日志里可能有玩家 IP，
+        贴出来之前请先打码或删掉。
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 发生了什么
+      description: 具体现象；如果有报错原文，请原样贴出来（不要只说“报错了”）
+      placeholder: 例如：点「启动服务器」后一直显示未运行，命令行窗口里出现 XXX
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 按顺序写清楚，别人照着做能复现最好
+      placeholder: |
+        1. 打开「仪表盘」
+        2. 选世界 xxx，端口 7777
+        3. 点「启动服务器」
+        4. 出现……
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 你期望的结果
+    validations:
+      required: false
+
+  - type: dropdown
+    id: panel-version
+    attributes:
+      label: 面板版本
+      description: 面板「帮助」页 →「关于」里能看到
+      options:
+        - v1.0.1
+        - v1.0.0
+        - 更早的版本 / 自己改过的版本
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js 版本
+      description: 在命令行执行 `node -v`，把结果填进来
+      placeholder: v22.17.0
+    validations:
+      required: true
+
+  - type: input
+    id: tshock-version
+    attributes:
+      label: TShock / 游戏版本
+      placeholder: TShock 6.2.1 / Terraria 1.4.5.8
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: 操作系统
+      options:
+        - Windows 11
+        - Windows 10
+        - 其他（在下方的补充说明里写）
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志 / 截图
+      description: 面板命令行窗口的输出、`tshock/logs/` 里最近的日志，或者截图（可以直接拖进来）
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: 补充说明
+      description: 装了什么插件、改过哪些配置、是不是局域网连的……任何你觉得相关的信息
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 我已经删掉了日志/截图里的令牌、密码和玩家 IP
+          required: true
+        - label: 我搜索过现有的 issue，没有找到同样的问题
+          required: true
