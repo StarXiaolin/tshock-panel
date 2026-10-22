@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TShock 管理面板</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">TS</div>
+      <div class="brand-text">
+        <strong>TShock</strong>
+        <span>管理面板</span>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav">
+      <button class="nav-item active" data-view="dashboard">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        <span>仪表盘</span>
+      </button>
+      <button class="nav-item" data-view="console">
+        <svg viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm2.7 3.3 2.9 3.7-2.9 3.7 1.2 1L12 11l-4.1-5.7-1.2 1z"/></svg>
+        <span>控制台</span>
+      </button>
+      <button class="nav-item" data-view="worlds">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 6h-2.5a15.7 15.7 0 0 0-1.3-3.4A8 8 0 0 1 18.9 8zM12 4c.7 1 1.3 2.3 1.7 4h-3.4c.4-1.7 1-3 1.7-4zM4.3 14a8 8 0 0 1 0-4h2.9a17 17 0 0 0 0 4H4.3zm.8 2h2.5c.3 1.2.8 2.4 1.3 3.4A8 8 0 0 1 5.1 16zm2.5-8H5.1a8 8 0 0 1 3.8-3.4A15.7 15.7 0 0 0 7.6 8zM12 20c-.7-1-1.3-2.3-1.7-4h3.4c-.4 1.7-1 3-1.7 4zm2.1-6H9.9a15 15 0 0 1 0-4h4.2a15 15 0 0 1 0 4zm.6 5.4c.5-1 1-2.2 1.3-3.4h2.5a8 8 0 0 1-3.8 3.4zM16.8 14a17 17 0 0 0 0-4h2.9a8 8 0 0 1 0 4h-2.9z"/></svg>
+        <span>世界存档</span>
+      </button>
+      <button class="nav-item" data-view="give">
+        <svg viewBox="0 0 24 24"><path d="M20 7h-3V5a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3v2H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zm-9-2h4v2h-4V5zm9 13H4V9h16v9z"/></svg>
+        <span>物品发放</span>
+      </button>
+      <button class="nav-item" data-view="events">
+        <svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        <span>世界事件</span>
+      </button>
+      <button class="nav-item" data-view="warps">
+        <svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+        <span>传送点</span>
+      </button>
+      <button class="nav-item" data-view="groups">
+        <svg viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4zm0 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm0 11c-2.5 0-4.7-1.3-6-3.2.1-2 4-3.1 6-3.1s5.9 1.1 6 3.1c-1.3 1.9-3.5 3.2-6 3.2z"/></svg>
+        <span>权限管理</span>
+      </button>
+      <button class="nav-item" data-view="players">
+        <svg viewBox="0 0 24 24"><path d="M16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-8 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 2c-2.3 0-7 1.2-7 3.5V19h14v-2.5C15 14.2 10.3 13 8 13zm8 0c-.3 0-.6 0-1 .1 1.2.8 2 2 2 3.4V19h6v-2.5c0-2.3-4.7-3.5-7-3.5z"/></svg>
+        <span>玩家与封禁</span>
+      </button>
+      <button class="nav-item" data-view="plugins">
+        <svg viewBox="0 0 24 24"><path d="M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4a2 2 0 0 0-2 2v3.8h1.5a2.2 2.2 0 0 1 0 4.4H2V19a2 2 0 0 0 2 2h4v-1.5a2.2 2.2 0 0 1 4.4 0V21h4a2 2 0 0 0 2-2v-4h1.5a2.5 2.5 0 0 0 0-5z"/></svg>
+        <span>插件管理</span>
+      </button>
+      <button class="nav-item" data-view="settings">
+        <svg viewBox="0 0 24 24"><path d="M19.4 13a7.5 7.5 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.6 7.6 0 0 0-1.7-1L15 3H9l-.4 2.8c-.6.2-1.2.6-1.7 1l-2.5-1-2 3.5L4.6 11a7.5 7.5 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1c.5.4 1.1.8 1.7 1L9 21h6l.4-2.8c.6-.2 1.2-.6 1.7-1l2.5 1 2-3.5L19.4 13zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/></svg>
+        <span>服务器设置</span>
+      </button>
+      <button class="nav-item" data-view="backups">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+        <span>备份与还原</span>
+      </button>
+      <button class="nav-item" data-view="appearance">
+        <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.2 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4c0-4.4-4-7.7-9-7.7zM6.5 12a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3-4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3.5 4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>
+        <span>外观</span>
+      </button>
+      <button class="nav-item" data-view="help">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 17h-2v-2h2v2zm1.8-7.3-.9.9c-.7.7-1 1.2-1 2.4h-2v-.5c0-.9.4-1.7 1-2.4l1.2-1.3c.4-.3.6-.8.6-1.4a2 2 0 0 0-4 0h-2a4 4 0 1 1 8 0c0 .7-.3 1.5-.9 2.1z"/></svg>
+        <span>帮助</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="mini-status" id="side-status">
+        <span class="dot"></span>
+        <div>
+          <div class="mini-title">未运行</div>
+          <div class="mini-sub">—</div>
+        </div>
+      </div>
+      <button class="side-link" data-action="open" data-target="panel">面板目录</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-title">
+        <h1 id="view-title">仪表盘</h1>
+        <p id="view-sub">服务器概况与一键启停</p>
+      </div>
+      <div class="topbar-actions">
+        <span class="pill" id="pill-status"><i></i><b>检测中</b></span>
+        <button class="btn btn-primary" id="btn-start">启动服务器</button>
+        <button class="btn" id="btn-restart" hidden>重启</button>
+        <button class="btn btn-danger" id="btn-stop" hidden>停止</button>
+      </div>
+    </header>
+
+    <div class="content" id="content">
+      <!-- 仪表盘 -->
+      <section class="view active" data-view="dashboard">
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-icon" id="stat-icon-status">●</div>
+            <div class="stat-body">
+              <div class="stat-label">服务器状态</div>
+              <div class="stat-value" id="stat-status">未运行</div>
+              <div class="stat-sub" id="stat-status-sub">已停止</div>
+            </div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon blue">◈</div>
+            <div class="stat-body">
+              <div class="stat-label">在线玩家</div>
+              <div class="stat-value" id="stat-players">0</div>
+              <div class="stat-sub" id="stat-players-sub">上限 8 人</div>
+            </div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon violet">◎</div>
+            <div class="stat-body">
+              <div class="stat-label">当前世界</div>
+              <div class="stat-value small" id="stat-world">未选择</div>
+              <div class="stat-sub" id="stat-world-sub">请选择存档</div>
+            </div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon amber">⇄</div>
+            <div class="stat-body">
+              <div class="stat-label">端口</div>
+              <div class="stat-value" id="stat-port">7777</div>
+              <div class="stat-sub" id="stat-port-sub">REST 7878</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns">
+          <div class="col">
+            <div class="card" id="launch-card">
+              <div class="card-head">
+                <h2>启动服务器</h2>
+                <span class="tag" id="launch-tag">未运行</span>
+              </div>
+              <div class="card-body" id="launch-form">
+                <div class="field">
+                  <label>世界存档</label>
+                  <div class="row">
+                    <select id="launch-world" class="input"></select>
+                    <button class="btn btn-ghost" data-action="goto-worlds">管理</button>
+                  </div>
+                  <div class="hint" id="launch-world-hint">从现有存档中选择，或到「世界存档」新建</div>
+                </div>
+                <div class="launch-meta" id="launch-meta">
+                  <div><span>端口</span><b id="launch-port-value">—</b></div>
+                  <div><span>最大玩家数</span><b id="launch-max-value">—</b></div>
+                  <div><span>密码</span><b id="launch-pass-value">—</b></div>
+                  <button class="btn btn-ghost sm" data-action="goto-settings">修改</button>
+                </div>
+                <button class="btn btn-primary btn-lg" id="launch-go">启动服务器</button>
+                <div class="hint" id="launch-tip">端口、人数与密码统一以「服务器设置 → 基础与连接」为准，修改后需要重启服务器。</div>
+              </div>
+              <div class="card-body running-only" id="launch-running">
+                <div class="run-info">
+                  <div><span>运行时长</span><b id="run-uptime">—</b></div>
+                  <div><span>进程 PID</span><b id="run-pid">—</b></div>
+                  <div><span>世界</span><b id="run-world">—</b></div>
+                  <div><span>版本</span><b id="run-version">—</b></div>
+                </div>
+                <div class="btn-row">
+                  <button class="btn btn-danger" data-action="stop">停止服务器</button>
+                  <button class="btn" data-action="restart">重启</button>
+                  <button class="btn" data-action="save-world">立即存档</button>
+                  <button class="btn" data-action="goto-console">打开控制台</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h2>实时日志</h2>
+                <button class="btn btn-ghost sm" data-action="goto-console">查看全部</button>
+              </div>
+              <div class="log-mini" id="dash-log"></div>
+            </div>
+          </div>
+
+          <div class="col narrow">
+            <div class="card">
+              <div class="card-head">
+                <h2>在线玩家</h2>
+                <button class="btn btn-ghost sm" data-action="refresh-players">刷新</button>
+              </div>
+              <div class="players-mini" id="dash-players"><div class="empty">服务器未运行</div></div>
+            </div>
+
+            <div class="card" id="setup-card-wrap">
+              <div class="card-head"><h2>服主认证码</h2></div>
+              <div class="card-body" id="setup-card"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h2>服务器信息</h2></div>
+              <div class="card-body info-list" id="info-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 控制台 -->
+      <section class="view" data-view="console">
+        <div class="console-shell">
+          <div class="console-bar">
+            <div class="seg" id="console-filter">
+              <button class="active" data-filter="all">全部</button>
+              <button data-filter="error">错误</button>
+              <button data-filter="cmd">命令</button>
+            </div>
+            <div class="grow"></div>
+            <label class="check"><input type="checkbox" id="console-autoscroll" checked /> 自动滚动</label>
+            <button class="btn btn-ghost sm" data-action="clear-console">清空</button>
+            <button class="btn btn-ghost sm" data-action="download-log">导出日志</button>
+          </div>
+          <div class="console" id="console"></div>
+          <div class="quick-cmds" id="quick-cmds">
+            <button data-cmd="/who">在线列表</button>
+            <button data-cmd="/save">保存世界</button>
+            <button data-cmd="/time">当前时间</button>
+            <button data-cmd="/time 04:30">设置凌晨</button>
+            <button data-cmd="/time 12:00">设置正午</button>
+            <button data-cmd="/time 19:30">设置黄昏</button>
+            <button data-cmd="/time 00:00">设置午夜</button>
+            <button data-cmd="/settle">停止液体</button>
+            <button data-cmd="/butcher">清除怪物</button>
+            <button data-cmd="/reload">重载配置</button>
+          </div>
+          <form class="console-input" id="console-form">
+            <span class="prompt">/</span>
+            <input id="console-cmd" autocomplete="off" spellcheck="false" placeholder="输入服务器命令，例如 who、say 你好、time" />
+            <button class="btn btn-primary" type="submit">发送</button>
+          </form>
+          <div class="hint console-hint">命令通过 TShock REST 接口下发，开头不写「/」也可以。</div>
+        </div>
+      </section>
+
+      <!-- 世界 -->
+      <section class="view" data-view="worlds">
+        <div class="toolbar">
+          <button class="btn btn-primary" data-action="new-world">＋ 新建世界</button>
+          <button class="btn" data-action="upload-world">导入存档</button>
+          <button class="btn btn-ghost" data-action="open" data-target="worlds">打开存档目录</button>
+          <div class="grow"></div>
+          <input class="input search" id="world-search" placeholder="搜索世界名…" />
+          <button class="btn btn-ghost" data-action="refresh-worlds">刷新</button>
+          <input type="file" id="world-file" accept=".wld" hidden />
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <h2>本地世界存档</h2>
+            <span class="muted" id="worlds-count">—</span>
+          </div>
+          <div class="table-wrap">
+            <table class="table" id="worlds-table">
+              <thead>
+                <tr>
+                  <th>世界</th>
+                  <th class="w-100">版本</th>
+                  <th class="w-110">大小</th>
+                  <th class="w-170">修改时间</th>
+                  <th class="w-240">操作</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="hint" id="worlds-dirs"></div>
+      </section>
+
+      <!-- 物品发放 -->
+      <section class="view" data-view="give">
+        <div class="columns">
+          <div class="col">
+            <div class="card">
+              <div class="card-head">
+                <h2>发放物品</h2>
+                <button class="btn btn-ghost sm" data-action="refresh-give-players">刷新玩家</button>
+              </div>
+              <div class="card-body">
+                <div class="field">
+                  <label>目标玩家</label>
+                  <select class="input" id="give-player"></select>
+                  <div class="hint" id="give-player-hint">只列出当前在线的玩家</div>
+                </div>
+
+                <div class="field">
+                  <label>搜索物品</label>
+                  <input class="input" id="give-search" placeholder="中文名 / 英文名 / 数字 ID，例如 天顶剑、Zenith、4956" autocomplete="off" />
+                </div>
+
+                <div class="field-row">
+                  <div class="field">
+                    <label>数量</label>
+                    <input class="input" id="give-count" type="number" min="1" max="9999" value="1" />
+                  </div>
+                  <div class="field">
+                    <label>前缀 ID</label>
+                    <input class="input" id="give-prefix" type="number" min="0" max="255" value="0" />
+                    <div class="hint">0 表示无前缀；前缀是否适用于该物品由 TShock 校验</div>
+                  </div>
+                </div>
+
+                <div class="picked-item" id="give-picked">
+                  <div class="empty">还没有选择物品，先在上面的搜索框里挑一件</div>
+                </div>
+
+                <button class="btn btn-primary btn-lg" id="give-submit" disabled>发放给玩家</button>
+                <div class="hint">底层调用 TShock 的 <code>/give</code>，需要权限 <code>tshock.item.give</code>；发送前会校验玩家是否在线、物品 ID 是否有效。</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h2>常用物品</h2></div>
+              <div class="card-body quick-items" id="give-quick"></div>
+            </div>
+          </div>
+
+          <div class="col narrow">
+            <div class="card">
+              <div class="card-head"><h2>最近发放</h2></div>
+              <div class="card-body" id="give-history"><div class="empty">还没有发放记录</div></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h2>操作说明</h2></div>
+              <div class="card-body prose">
+                <p>物品库内置 <b id="give-item-count">—</b> 条记录，来自 Terraria 官方物品 ID 表（中文名 / 英文名 / 内部名），离线可用。</p>
+                <p>负数 netID 是特殊物品（例如起始装备），搜索框里输入负数可直接选中。</p>
+                <p>发放对象必须是当前在线的玩家，服务器未运行时无法发放。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 世界事件 -->
+      <section class="view" data-view="events">
+        <div class="toolbar">
+          <button class="btn" data-action="refresh-events">重新读取事件列表</button>
+          <div class="grow"></div>
+          <span class="muted" id="events-source"></span>
+        </div>
+
+        <div class="event-status" id="event-status"></div>
+
+        <div class="event-grid" id="event-grid"></div>
+
+        <div class="columns">
+          <div class="col">
+            <div class="card">
+              <div class="card-head">
+                <h2>入侵</h2>
+                <span class="perm-chip">tshock.world.events.invasion</span>
+              </div>
+              <div class="card-body">
+                <div class="field-row">
+                  <div class="field">
+                    <label>入侵类型</label>
+                    <select class="input" id="invasion-type"></select>
+                  </div>
+                  <div class="field">
+                    <label>波数（可选）</label>
+                    <input class="input" id="invasion-waves" type="number" min="1" max="999" placeholder="留空则由游戏决定" />
+                  </div>
+                </div>
+                <button class="btn btn-primary" data-action="trigger-invasion">开始入侵</button>
+                <div class="hint">对应 <code>/worldevent invasion [入侵类型] [入侵波数]</code></div>
+              </div>
+            </div>
+          </div>
+          <div class="col narrow">
+            <div class="card">
+              <div class="card-head">
+                <h2>雨</h2>
+                <span class="perm-chip">tshock.world.events.rain</span>
+              </div>
+              <div class="card-body">
+                <div class="field">
+                  <label>雨的类型</label>
+                  <select class="input" id="rain-type"></select>
+                </div>
+                <button class="btn btn-primary" data-action="trigger-rain">开始下雨</button>
+                <div class="hint">对应 <code>/worldevent rain [类型]</code>；普通雨不带类型。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>最近一次操作</h2></div>
+          <div class="card-body" id="event-result"><div class="empty">还没有触发过事件</div></div>
+        </div>
+      </section>
+
+      <!-- 权限管理 -->
+      <section class="view" data-view="groups">
+        <div class="groups-layout">
+          <div class="card groups-list-card">
+            <div class="card-head">
+              <h2>用户组</h2>
+              <button class="btn btn-ghost sm" data-action="refresh-groups">刷新</button>
+            </div>
+            <div id="group-list" class="group-list"><div class="empty">加载中…</div></div>
+          </div>
+
+          <div class="card groups-detail-card">
+            <div class="card-head">
+              <h2 id="group-detail-title">选择一个用户组</h2>
+              <span class="muted" id="group-detail-meta"></span>
+            </div>
+            <div class="card-body" id="group-detail">
+              <div class="empty">左侧点击一个组，查看并编辑它的权限。</div>
+            </div>
+            <div class="card-body" id="group-detail-body" hidden>
+              <div class="field-row">
+                <div class="field">
+                  <label>父组（权限继承）</label>
+                  <select class="input" id="group-parent"></select>
+                </div>
+                <div class="field" style="flex:0 0 auto; justify-content:flex-end">
+                  <button class="btn" data-action="save-parent">保存父组</button>
+                </div>
+              </div>
+              <div id="group-warn"></div>
+
+              <div class="perm-add">
+                <input class="input" id="perm-input" placeholder="手动输入权限节点，例如 tshock.item.give" />
+                <button class="btn btn-primary" data-action="add-perm">添加</button>
+              </div>
+
+              <div class="detail-sub">常用权限（点击添加）</div>
+              <div id="perm-catalog" class="perm-catalog"></div>
+
+              <div class="detail-sub">该组当前权限 <span class="muted" id="perm-count"></span></div>
+              <div id="perm-list" class="perm-list"></div>
+
+              <div class="hint">
+                列表只显示该组“自身”的权限；从父组继承来的权限不会列在这里，也无法在这里删除。
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 传送点 -->
+      <section class="view" data-view="warps">
+        <div class="toolbar">
+          <button class="btn btn-primary" data-action="new-warp">＋ 新建传送点</button>
+          <div class="grow"></div>
+          <input class="input search" id="warp-search" placeholder="搜索传送点…" />
+          <button class="btn btn-ghost" data-action="refresh-warps">刷新</button>
+        </div>
+
+        <div class="notice info" id="warp-scope">正在读取传送点…</div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>传送点列表</h2>
+            <div class="card-head-actions">
+              <span class="muted" id="warp-count"></span>
+              <button class="btn btn-ghost sm" data-action="warp-batch-hide">批量隐藏</button>
+              <button class="btn btn-ghost sm" data-action="warp-batch-show">批量取消隐藏</button>
+              <button class="btn btn-danger sm" data-action="warp-batch-delete">批量删除</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="table" id="warps-table">
+              <thead>
+                <tr>
+                  <th class="w-40"><input type="checkbox" id="warp-select-all" /></th>
+                  <th>名称</th>
+                  <th class="w-110">坐标</th>
+                  <th class="w-120">所属世界</th>
+                  <th class="w-90">可见性</th>
+                  <th class="w-260">操作</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="hint">
+          传送点保存在 <code>tshock.sqlite</code> 的 <code>Warps</code> 表中，按世界 ID 区分。
+          TShock 在启动时把它们读入内存，所以<strong>新建的传送点需要重启服务器</strong>才会生效；
+          隐藏/删除走的是 <code>/warp hide</code>、<code>/warp del</code> 命令，会立即生效。
+          权限：管理需要 <code>tshock.admin.warp</code>，发送玩家需要 <code>tshock.tp.others</code>。
+        </div>
+      </section>
+
+      <!-- 插件管理 -->
+      <section class="view" data-view="plugins">
+        <div class="notice" id="plugin-banner">
+          插件文件的增删改都需要<strong>重启服务器</strong>才会生效；TShock 没有提供运行时热重载或卸载插件的接口。
+        </div>
+
+        <div class="toolbar">
+          <button class="btn" data-action="upload-plugin">上传插件 DLL</button>
+          <button class="btn btn-ghost" data-action="open" data-target="plugins">打开插件目录</button>
+          <div class="grow"></div>
+          <button class="btn btn-ghost" data-action="refresh-plugins">刷新</button>
+          <input type="file" id="plugin-file" accept=".dll" hidden />
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>插件文件（ServerPlugins）</h2>
+            <span class="muted" id="plugin-count"></span>
+          </div>
+          <div class="table-wrap">
+            <table class="table" id="plugins-table">
+              <thead><tr><th>文件名</th><th class="w-110">大小</th><th class="w-170">修改时间</th><th class="w-190">操作</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" id="apm-card" hidden>
+          <div class="card-head">
+            <h2>AutoPluginManager</h2>
+            <span class="perm-chip">/apm</span>
+          </div>
+          <div class="card-body">
+            <div id="apm-output" class="mono-block"></div>
+            <div class="btn-row">
+              <button class="btn sm" data-action="apm-list">刷新列表（/apm -il）</button>
+              <input class="input" id="apm-index" type="number" min="1" placeholder="序号" style="max-width:110px" />
+              <button class="btn sm" data-action="apm-on">启用</button>
+              <button class="btn sm" data-action="apm-off">禁用</button>
+            </div>
+            <div class="hint">这些开关底层执行 <code>/apm -on [序号]</code> / <code>/apm -off [序号]</code>，由 AutoPluginManager 自己处理。</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>插件配置文件（tshock/*.json）</h2>
+            <span class="muted">已排除 config.json / sscconfig.json</span>
+          </div>
+          <div class="table-wrap">
+            <table class="table" id="plugin-configs-table">
+              <thead><tr><th>文件</th><th class="w-110">大小</th><th class="w-170">修改时间</th><th class="w-120">操作</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="hint">配置文件保存前会自动备份到 <code>TShockPanel/backups/config/</code>。</div>
+      </section>
+
+      <!-- 外观 -->
+      <section class="view" data-view="appearance">
+        <div class="columns">
+          <div class="col">
+            <div class="card">
+              <div class="card-head">
+                <h2>主题</h2>
+                <span class="muted">切换立即生效，不会触发任何服务器请求</span>
+              </div>
+              <div class="card-body">
+                <div class="theme-grid" id="theme-grid"></div>
+                <div class="hint">主题只影响面板本身的外观，不会修改 TShock 的任何配置或数据。</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h2>自定义配色</h2>
+                <span class="muted">不限制黑白，自选颜色</span>
+              </div>
+              <div class="card-body">
+                <div class="color-grid" id="color-editor"></div>
+                <div class="btn-row" style="margin-top: 12px">
+                  <button class="btn sm btn-primary" data-action="apply-custom-colors">应用配色</button>
+                  <button class="btn sm" data-action="reset-custom-colors">清除自定义</button>
+                </div>
+                <div class="hint" id="color-editor-hint">从当前主题开始调，不点「应用配色」不会保存。</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h2>布局与字号</h2></div>
+              <div class="card-body">
+                <div class="field-row">
+                  <div class="field">
+                    <label>字号缩放</label>
+                    <select class="input" id="ui-font-scale">
+                      <option value="0.9">90%</option>
+                      <option value="1">100%</option>
+                      <option value="1.1">110%</option>
+                      <option value="1.25">125%</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>布局密度</label>
+                    <select class="input" id="ui-density">
+                      <option value="comfortable">舒适</option>
+                      <option value="compact">紧凑</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>侧边栏图标</label>
+                    <select class="input" id="ui-icon-size">
+                      <option value="18">标准</option>
+                      <option value="22">大</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>显示按钮文字</label>
+                    <label class="switch"><input type="checkbox" id="ui-show-labels" /><span></span></label>
+                  </div>
+                </div>
+                <div class="hint">字号放大后布局会自动换行；如出现重叠请调回 100%。</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col narrow">
+            <div class="card">
+              <div class="card-head"><h2>自定义主题</h2></div>
+              <div class="card-body">
+                <textarea class="textarea mono" id="theme-json" rows="10" spellcheck="false" placeholder="导出的主题 JSON"></textarea>
+                <div class="btn-row">
+                  <button class="btn sm" data-action="export-theme">导出当前主题</button>
+                  <button class="btn sm btn-primary" data-action="import-theme">导入主题</button>
+                  <button class="btn sm btn-ghost" data-action="reset-theme">恢复默认</button>
+                </div>
+                <div class="hint">导入时会校验所有令牌与颜色格式，缺失或非法会直接报错，不会静默套用默认值。</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h2>配置存放位置</h2></div>
+              <div class="card-body info-list">
+                <div class="info-row"><span>文件</span><b>TShockPanel/dsh.ui.json</b></div>
+                <div class="info-row"><span>说明</span><b>与 tshock/ 完全隔离</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 玩家 -->
+      <section class="view" data-view="players">
+        <div class="columns">
+          <div class="col">
+            <div class="card">
+              <div class="card-head">
+                <h2>在线玩家</h2>
+                <button class="btn btn-ghost sm" data-action="refresh-players">刷新</button>
+              </div>
+              <div class="table-wrap">
+                <table class="table" id="players-table">
+                  <thead>
+                    <tr><th>角色名</th><th>账号</th><th>权限组</th><th>IP</th><th class="w-240">操作</th></tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h2>封禁列表</h2></div>
+              <div class="card-body">
+                <form class="inline-form" id="ban-form">
+                  <input class="input" id="ban-identifier" placeholder="玩家名或 IP" required />
+                  <input class="input" id="ban-name" placeholder="备注名（可选）" />
+                  <input class="input grow" id="ban-reason" placeholder="封禁原因" />
+                  <button class="btn btn-danger" type="submit">封禁</button>
+                </form>
+              </div>
+              <div class="table-wrap">
+                <table class="table" id="bans-table">
+                  <thead>
+                    <tr><th class="w-70">回执</th><th>标识</th><th>原因</th><th>操作人</th><th class="w-110">操作</th></tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col narrow">
+            <div class="card">
+              <div class="card-head"><h2>用户账户</h2></div>
+              <div class="card-body">
+                <form class="stack" id="user-form">
+                  <input class="input" id="user-name" placeholder="用户名（游戏内登录用）" required />
+                  <input class="input" id="user-pass" type="password" placeholder="密码（至少 4 位）" required />
+                  <select class="input" id="user-group"></select>
+                  <button class="btn btn-primary" type="submit">创建账户</button>
+                </form>
+              </div>
+              <div class="table-wrap">
+                <table class="table" id="users-table">
+                  <thead><tr><th>用户名</th><th>权限组</th><th class="w-170">操作</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+              <div class="card-body">
+                <input class="input" id="user-search" placeholder="搜索账户名…" />
+                <div class="hint">账户操作通过 TShock 的 <code>/user</code> 与用户接口完成，密码只以掩码输入、不会写入日志。</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h2>白名单</h2>
+                <button class="btn btn-ghost sm" data-action="save-whitelist">保存</button>
+              </div>
+              <div class="card-body">
+                <textarea class="textarea" id="whitelist" rows="8" spellcheck="false" placeholder="每行一个玩家名"></textarea>
+                <div class="hint">需要在「服务器设置 → 账号与登录」中开启「启用白名单」才会生效。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 设置 -->
+      <section class="view" data-view="settings">
+        <div class="tabs" id="settings-tabs">
+          <button class="active" data-tab="server">服务器设置</button>
+          <button data-tab="ssc">角色存档（SSC）</button>
+          <button data-tab="texts">公告与规则</button>
+          <button data-tab="panel">面板设置</button>
+        </div>
+
+        <div class="tab-panel active" data-tab="server">
+          <div class="toolbar sticky">
+            <input class="input search" id="settings-search" placeholder="搜索设置项，例如 端口、备份、PvP…" />
+            <div class="grow"></div>
+            <span class="muted" id="settings-dirty"></span>
+            <button class="btn btn-ghost" data-action="toggle-raw-config">原始 JSON</button>
+            <button class="btn" data-action="reload-config">重新读取</button>
+            <button class="btn btn-primary" data-action="save-config">保存设置</button>
+          </div>
+          <div id="settings-form"></div>
+          <div class="card raw-card" id="raw-config-card" hidden>
+            <div class="card-head">
+              <h2>原始 JSON</h2>
+              <span class="muted">谨慎修改，保存前会自动备份</span>
+            </div>
+            <textarea class="textarea mono" id="raw-config" rows="26" spellcheck="false"></textarea>
+            <div class="card-body"><button class="btn btn-primary" data-action="save-raw-config">写入配置文件</button></div>
+          </div>
+        </div>
+
+        <div class="tab-panel" data-tab="ssc">
+          <div class="card">
+            <div class="card-head">
+              <h2>服务端角色（SSC）</h2>
+              <button class="btn btn-primary" data-action="save-ssc">保存</button>
+            </div>
+            <div class="card-body" id="ssc-form"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <h2>初始物品（StartingInventory）</h2>
+              <div>
+                <button class="btn btn-ghost sm" data-action="ssc-add-item">＋ 添加物品</button>
+                <button class="btn btn-primary sm" data-action="save-ssc-inventory">保存初始物品</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="notice" id="ssc-inventory-notice"></div>
+              <div class="ssc-rows" id="ssc-inventory"></div>
+              <div class="hint">
+                对应 <code>tshock/sscconfig.json</code> 的 <code>StartingInventory</code>；保存时只写这个字段，不会改动
+                <code>StartingHealth</code>、<code>StartingMana</code> 等其它配置。
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h2>原始 JSON</h2></div>
+            <textarea class="textarea mono" id="raw-ssc" rows="18" spellcheck="false"></textarea>
+            <div class="card-body"><button class="btn btn-primary" data-action="save-raw-ssc">写入配置文件</button></div>
+          </div>
+        </div>
+
+        <div class="tab-panel" data-tab="texts">
+          <div class="columns">
+            <div class="col">
+              <div class="card">
+                <div class="card-head">
+                  <h2>每日公告（motd.txt）</h2>
+                  <div>
+                    <button class="btn btn-ghost sm" data-action="insert-motd-template">插入注册/登录说明</button>
+                    <button class="btn btn-primary sm" data-action="save-text" data-name="motd">保存</button>
+                  </div>
+                </div>
+                <textarea class="textarea mono" id="text-motd" rows="15" spellcheck="false"></textarea>
+                <div class="hint">
+                  玩家进服时看到的公告。支持 <code>[c/55D284:文字]</code> 颜色标记，以及
+                  <code>%map%</code>、<code>%players%</code>、<code>%onlineplayers%</code>、<code>%serverslots%</code>、<code>%specifier%</code> 占位符。
+                  保存后执行 <code>/reload</code> 或重启服务器才会生效。
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card">
+                <div class="card-head">
+                  <h2>服务器规则（rules.txt）</h2>
+                  <button class="btn btn-primary" data-action="save-text" data-name="rules">保存</button>
+                </div>
+                <textarea class="textarea mono" id="text-rules" rows="12" spellcheck="false"></textarea>
+                <div class="hint">玩家在游戏内输入 /rules 时看到的内容，每行一条。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" data-tab="panel">
+          <div class="card">
+            <div class="card-head"><h2>面板与启动偏好</h2></div>
+            <div class="card-body" id="panel-form">
+              <div class="field">
+                <label>泰拉瑞亚存档目录</label>
+                <input class="input" id="panel-worlds-dir" />
+                <div class="hint">默认为「文档 / My Games / Terraria / Worlds」。</div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label>REST 端口</label>
+                  <input class="input" id="panel-rest-port" type="number" min="1024" max="65535" />
+                  <div class="hint">面板通过它读取玩家列表并执行命令，修改后需重启服务器。</div>
+                </div>
+                <div class="field">
+                  <label>启动时自动备份</label>
+                  <label class="switch"><input type="checkbox" id="panel-backup-on-start" /><span></span></label>
+                </div>
+                <div class="field">
+                  <label>崩溃后自动重启</label>
+                  <label class="switch"><input type="checkbox" id="panel-auto-restart" /><span></span></label>
+                </div>
+              </div>
+              <button class="btn btn-primary" data-action="save-panel">保存面板设置</button>
+              <div class="divider"></div>
+              <div class="btn-row">
+                <button class="btn" data-action="quit-panel" data-stop="0">仅退出面板</button>
+                <button class="btn btn-danger" data-action="quit-panel" data-stop="1">停止服务器并退出面板</button>
+              </div>
+              <div class="hint">退出面板后，浏览器里的页面会失效，重新双击「启动管理面板.cmd」即可再次打开。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 备份 -->
+      <section class="view" data-view="backups">
+        <div class="toolbar">
+          <button class="btn btn-primary" data-action="create-backup">立即备份当前世界</button>
+          <button class="btn btn-ghost" data-action="open" data-target="backups">打开备份目录</button>
+          <div class="grow"></div>
+          <button class="btn btn-ghost" data-action="refresh-backups">刷新</button>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <h2>备份列表</h2>
+            <span class="muted">包含世界存档、账号数据库与配置</span>
+          </div>
+          <div class="table-wrap">
+            <table class="table" id="backups-table">
+              <thead>
+                <tr><th>时间</th><th>内容</th><th>来源</th><th class="w-100">大小</th><th class="w-190">操作</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 帮助 -->
+      <section class="view" data-view="help">
+        <div class="columns">
+          <div class="col">
+            <div class="card">
+              <div class="card-head"><h2>快速上手</h2></div>
+              <div class="card-body prose">
+                <ol>
+                  <li>在「世界存档」里选择一个现有世界，或新建一个世界。</li>
+                  <li>回到「仪表盘」，设置端口与人数后点击「启动服务器」。</li>
+                  <li>服务器启动后，玩家用你的局域网 IP 或公网 IP 连接 <code>端口 7777</code>。</li>
+                  <li>第一次成为服主：进游戏后输入聊天命令 <code>/setup 认证码</code>，认证码显示在仪表盘上。</li>
+                  <li>需要改规则时到「服务器设置」，保存后点击「重启」生效。</li>
+                </ol>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h2>常见问题</h2></div>
+              <div class="card-body prose">
+                <h3>朋友连不上怎么办？</h3>
+                <p>依次检查：服务器是否运行、端口是否填写一致、Windows 防火墙是否放行了 <code>TShock.Server.exe</code>、路由器是否做了端口转发（外网联机）。</p>
+                <h3>控制台命令为什么没有回显？</h3>
+                <p>命令通过 TShock 的 REST 接口执行，返回值会直接显示在控制台。世界里发生的事情仍然会出现在日志区。</p>
+                <h3>修改设置后为什么不生效？</h3>
+                <p>绝大多数设置需要重启服务器才会重新读取。</p>
+                <h3>存档在哪里？</h3>
+                <p>默认为 <code>文档\My Games\Terraria\Worlds</code>，也可以在「面板设置」里改成服务器目录下的其它位置。</p>
+                <h3>面板安全吗？</h3>
+                <p>面板只监听 <code>127.0.0.1</code>，不会暴露到局域网；REST 端口则可能被局域网访问，密码与令牌请不要外传。</p>
+              </div>
+            </div>
+          </div>
+          <div class="col narrow">
+            <div class="card">
+              <div class="card-head"><h2>当前路径</h2></div>
+              <div class="card-body info-list" id="help-paths"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h2>关于</h2></div>
+              <div class="card-body prose">
+                <p>TShock 管理面板 <b id="about-version">1.0.0</b></p>
+                <p class="muted">一个零依赖的本地网页面板，用来启动/停止泰拉瑞亚 TShock 服务器、管理世界与备份、修改配置、查看日志与玩家。</p>
+                <p class="muted">服务器程序、存档与配置均保持原有格式，面板只是为其提供一个图形界面。</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h2>快捷入口</h2></div>
+              <div class="card-body btn-col">
+                <button class="btn" data-action="open" data-target="server">服务器目录</button>
+                <button class="btn" data-action="open" data-target="tshock">tshock 配置目录</button>
+                <button class="btn" data-action="open" data-target="logs">日志目录</button>
+                <button class="btn" data-action="open" data-target="backups">备份目录</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div id="toasts" class="toasts"></div>
+<div id="modal-root"></div>
+<script src="js/00-core.js"></script>
+<script src="js/10-state.js"></script>
+<script src="js/20-shell.js"></script>
+<script src="js/30-dashboard.js"></script>
+<script src="js/31-console.js"></script>
+<script src="js/32-worlds.js"></script>
+<script src="js/33-players.js"></script>
+<script src="js/34-settings.js"></script>
+<script src="js/35-ssc.js"></script>
+<script src="js/36-misc.js"></script>
+<script src="js/37-theme.js"></script>
+<script src="js/38-give-events.js"></script>
+<script src="js/39-warps.js"></script>
+<script src="js/40-groups.js"></script>
+<script src="js/41-plugins.js"></script>
+<script src="js/42-actions.js"></script>
+<script src="js/43-actions-shell.js"></script>
+<script src="js/44-actions-warps.js"></script>
+<script src="js/45-actions-plugins-theme.js"></script>
+<script src="js/46-actions-give-events.js"></script>
+<script src="js/47-actions-groups-ssc.js"></script>
+<script src="js/48-actions-settings.js"></script>
+<script src="js/49-actions-worlds-players.js"></script>
+<script src="js/50-actions-backups-misc.js"></script>
+<script src="js/90-boot.js"></script>
+</body>
+</html>

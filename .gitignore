@@ -1,0 +1,39 @@
+# ---- 官方发布包的二进制与运行时（原样，不入库） ----
+dotnet/
+bin/
+ServerPlugins/
+i18n/
+x64/
+*.exe
+*.zip
+*.dat
+ServerLog.txt
+
+# ---- TShock 运行时数据（配置含 REST 令牌、sqlite 含账号、日志含玩家 IP） ----
+tshock/
+
+# ---- 面板运行期产物 ----
+TShockPanel/backups/
+TShockPanel/logs/
+TShockPanel/trash/
+
+# ---- 面板自身状态（含 REST 令牌 / 服务器密码 / 本机绝对路径） ----
+TShockPanel/panel.json
+TShockPanel/dsh.ui.json
+
+# ---- 冒烟测试产物 ----
+tools/smoke/
+
+# ---- 杂项 ----
+Thumbs.db
+.DS_Store
+node_modules/
+*.log
+*.tmp
+*.tmp-*
+
+# ---- IDE ----
+.idea/
+
+# ---- 文件工具的临时锁（不应入库） ----
+.dsh-ops-update-*.lock
