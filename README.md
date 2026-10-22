@@ -80,7 +80,7 @@ TShock-6.2.1-for-Terraria-1.4.5.8-win-x64-Release/
 node tools/run-tests.js
 ```
 
-跑 30 套单测 + 2 项前端检查（不需要 TShock 服务器，几秒钟跑完）。
+跑 30 套单测 + 3 项检查（前端完整性、前端启动、版本号；不需要 TShock 服务器，几秒钟跑完）。
 每次推送到 `main` 或提 PR，GitHub Actions 都会在 Windows + Node 22 上自动跑同一套测试。
 需要完整发布包才能跑的冒烟测试：
 
