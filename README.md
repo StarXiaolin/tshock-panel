@@ -67,6 +67,9 @@ TShock-6.2.1-for-Terraria-1.4.5.8-win-x64-Release/
 ## 安全说明
 
 - 面板只监听 `127.0.0.1`，不接受外部连接；也**没有登录鉴权**，所以不要把它改成对局域网开放。
+- 面板会校验每个 `/api/*` 请求的 `Host` 与 `Origin`：只接受本机来源（`127.0.0.1` / `localhost`）。
+  因此你浏览的恶意网页没法借你的浏览器向后端发请求（改配置、开服、执行命令）——
+  这就是所谓 CSRF / DNS rebinding 的攻击面。不带 `Origin` 的 curl / 脚本照旧可用。
 - `TShockPanel/panel.json` 里保存着 TShock REST 令牌和明文的服务器密码，**不要提交、不要分享**；
   本仓库的 `.gitignore` 已经排除它。
 - 面板会改写 `tshock/config.json` 以打开 REST 接口（默认 `7878`），这是下发控制台命令的通道。
