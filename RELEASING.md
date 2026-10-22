@@ -31,7 +31,8 @@ TShock 跟着游戏更新时：如果面板要改接口才能用（属于破坏�
 
 1. 改 `TShockPanel/server.js` 顶部的 `const VERSION = 'x.y.z'`（帮助页「关于」显示的就是它）。
 2. 在 `CHANGELOG.md` 最上面加一节，写清楚**新增 / 修复 / 破坏性变更 / 已知限制**。
-3. `node tools/run-tests.js` 全绿；有条件的话再用完整发布包跑一次 `tools/smoke.ps1`。
+3. `node tools/run-tests.js` 全绿（其中包含版本号守卫：格式与 CHANGELOG 小节）；
+   有条件的话再用完整发布包跑一次 `tools/smoke.ps1`。
 4. 提交：`git commit -am "release: vX.Y.Z"`。
 5. 打标签（带说明的标签）：`git tag -a vX.Y.Z -m "vX.Y.Z"`。
 6. 推送：`git push origin main && git push origin vX.Y.Z`。
@@ -44,6 +45,9 @@ TShock 跟着游戏更新时：如果面板要改接口才能用（属于破坏�
 - 仓库里：Git 标签 `vX.Y.Z`
 
 两者必须一致；不一致时以标签为准，并把 `VERSION` 对齐后补一个修订版本。
+
+这个规则不是只靠自觉：`tools/version-check.js` 会在 `run-tests.js` 里检查格式与
+CHANGELOG 小节，CI 在打标签的构建上还会额外比对 `--tag vX.Y.Z`（不一致则构建失败）。
 
 ## 四、这些千万别推上去
 

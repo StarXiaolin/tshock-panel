@@ -27,8 +27,8 @@ function listSuites() {
     .map((name) => path.join('tools', name));
 }
 
-/** 前端检查不是 *.test.js，单独列出来 */
-const FRONTEND_CHECKS = ['frontend-check.js', 'frontend-boot.js'].map((name) => path.join('tools', name));
+/** 非 *.test.js 的检查（前端完整性、前端启动、版本号），单独列出来 */
+const CHECKS = ['frontend-check.js', 'frontend-boot.js', 'version-check.js'].map((name) => path.join('tools', name));
 
 function runOne(rel) {
   const started = Date.now();
@@ -50,8 +50,8 @@ function runOne(rel) {
 
 function main() {
   const suites = listSuites();
-  const targets = [...suites, ...FRONTEND_CHECKS];
-  console.log(`跑 ${suites.length} 套单测 + ${FRONTEND_CHECKS.length} 项前端检查…\n`);
+  const targets = [...suites, ...CHECKS];
+  console.log(`跑 ${suites.length} 套单测 + ${CHECKS.length} 项检查…\n`);
 
   const failed = [];
   for (const rel of targets) {
